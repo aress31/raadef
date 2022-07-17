@@ -204,7 +204,7 @@ fn main() -> Result<()> {
 
             let jitter = rand::thread_rng().gen_range(0..=args.jitter);
             
-            thread::sleep(Duration::from_secs(args.timeout + jitter));
+            thread::sleep(Duration::from_secs(args.delay + jitter));
         }
     }
 

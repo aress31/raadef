@@ -45,6 +45,13 @@ pub struct Args {
     pub continue_on_success: bool,
     #[clap(
         default_value_t = 0,
+        help = "sets a delay in seconds between each connection",
+        long,
+        required = false,
+    )]
+    pub delay: u64,
+    #[clap(
+        default_value_t = 0,
         help = "sets a random delay between each connection",
         long,
         required = false,
@@ -73,14 +80,6 @@ pub struct Args {
     pub resource_principal: Resource,
     #[clap(help = "tenant to authenticate to", long, required = true, short)]
     pub tenant: String,
-    #[clap(
-        default_value_t = 0,
-        help = "max timeout in seconds between each request",
-        long,
-        required = false,
-        short = 'd'
-    )]
-    pub timeout: u64,
     #[clap(help = "file containing usernames", long, required = true, short)]
     pub username: String,
     #[clap(flatten)]
