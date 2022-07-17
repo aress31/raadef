@@ -6,6 +6,7 @@ use args::Args;
 use chrono::Utc;
 use clap::Parser;
 use constants::{ENDPOINTS, ERROR_CODES};
+use rand::Rng;
 use reqwest::{blocking::Client, blocking::Response, Proxy, StatusCode};
 use simplelog::{
     debug, error, info, trace, ColorChoice, CombinedLogger, Config, TermLogger, TerminalMode,
@@ -201,7 +202,9 @@ fn main() -> Result<()> {
 
             i += 1;
 
-            thread::sleep(Duration::from_secs(args.delay));
+            let jitter = rand::thread_rng().gen_range(0..=args.jitter);
+            
+            thread::sleep(Duration::from_secs(args.timeout + jitter));
         }
     }
 
