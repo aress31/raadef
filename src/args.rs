@@ -48,6 +48,7 @@ pub struct Args {
         help = "sets a delay in seconds between each connection",
         long,
         required = false,
+        short
     )]
     pub delay: u64,
     #[clap(
