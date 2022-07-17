@@ -148,7 +148,7 @@ fn main() -> Result<()> {
 
     info!("Starting the attack...☕");
 
-    let mut i: u128 = 0;
+    let mut i: u128 = 1;
 
     username_buf_reader.seek(SeekFrom::Start(0))?;
 
@@ -192,7 +192,7 @@ fn main() -> Result<()> {
             }
 
             if args.continue_on_success {
-                continue;
+                // Do nothing... 🦥
             } else {
                 if success {
                     break 'outer;
