@@ -7,7 +7,7 @@ pub struct BadRequest {
 
 #[derive(Debug)]
 pub struct Foo {
-    pub code: &'static str,
+    pub code: Option<&'static str>,
     pub message: &'static str,
     pub r#type: &'static str,
 }

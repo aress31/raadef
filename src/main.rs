@@ -56,7 +56,7 @@ fn parse_response(response: Response) -> Foo {
     match response.status() {
         StatusCode::OK => {
             return Foo {
-                code: "N/A",
+                code: None,
                 message: "CREDENTIALS_FOUND",
                 r#type: "SUCCESS",
             };
@@ -67,37 +67,26 @@ fn parse_response(response: Response) -> Foo {
             trace!("JSON body: {:#?}", json_body);
 
             for entry in ERROR_CODES {
-                let index = json_body.error_description.find(entry.code);
+                let index = json_body.error_description.find(entry.code.unwrap());
 
                 if index != None {
                     return entry;
                 }
             }
 
-            // TODO:
-            // return Foo {
-            //     code: json_body.error_description.clone(),
-            //     message: format!("UNHANDLED_EXCEPTION (ERROR_CODE: {})", json_body.error_description),
-            //     r#type: "ERROR"
-            // }
-
             return Foo {
-                code: "N/A",
-                message: "UNHANDLED_EXCEPTION (ERROR_CODE)",
+                // code: json_body.error_description.filer(AADSOMETHING),
+                code: None,
+                // message: format!("UNHANDLED_EXCEPTION (ERROR_CODE: <b>{}</b>)", json_body.error_description),
+                message: "UNHANDLED_EXCEPTION (<b>ERROR_CODE</b>)",
                 r#type: "ERROR",
             };
         }
         _ => {
-            // TODO
-            // return Foo {
-            //     code: "N/A",
-            //     message: format!("UNHANDLED_EXCEPTION (HTTP_STATUS: {})", response.status()),
-            //     r#type: "ERROR"
-            // };
-
             return Foo {
-                code: "N/A",
-                message: "UNHANDLED_EXCEPTION (HTTP_STATUS)",
+                code: None,
+                // message: format!("UNHANDLED_EXCEPTION (ERROR_CODE: <b>{}</b>)", response.status()),
+                message: "UNHANDLED_EXCEPTION (<b>HTTP_STATUS</b>)",
                 r#type: "ERROR",
             };
         }
