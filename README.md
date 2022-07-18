@@ -79,6 +79,11 @@ You would like to contribute to better this project? 🤩
 
 Please submit all `PRs` on the GitHub [pull requests tracker](https://github.com/aress31/raadef/pulls).
 
+## Acknowledgements
+
+- [Spray365](https://github.com/MarkoH17/Spray365)
+- [msspray.py](https://github.com/SecurityRiskAdvisors/msspray)
+
 ## License
 
 `RAADEF` is primarily distributed under the terms of the `Apache License (Version 2.0)`.

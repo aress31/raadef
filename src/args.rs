@@ -1,28 +1,17 @@
-use clap::{ArgEnum, Parser};
+use crate::constants::ENDPOINTS;
+
+use chrono::Utc;
+use clap::{Parser, __macro_refs::once_cell};
 use clap_verbosity_flag::{InfoLevel, Verbosity};
 use std::path::PathBuf;
 
-#[derive(ArgEnum, Clone, Debug, strum_macros::Display)]
-pub enum Resource {
-    AadGraphApi,
-    AzureKeyVault,
-    AzureMgmtApi,
-    CloudWebAppProxy,
-    Database,
-    DataCatalog,
-    MSGraphApi,
-    MSMAMService,
-    O365Exchange,
-    O365Yammer,
-    OfficeApps,
-    OfficeMgmt,
-    OneNote,
-    Outlook,
-    Sara,
-    Skype4Business,
-    SpacesApi,
-    WebShellSuite,
-    WindowsNetMgmtApi,
+fn default_result_path() -> &'static str {
+    static DEFAULT: once_cell::sync::Lazy<String> = once_cell::sync::Lazy::new(|| {
+        let timestamp = Utc::now().format("%Y-%m-%dT%H.%M.%S");
+        format!("./results/results-{}.txt", timestamp)
+    });
+
+    return &DEFAULT;
 }
 
 #[derive(Debug, Parser)]
@@ -59,28 +48,27 @@ pub struct Args {
         short
     )]
     pub jitter: u64,
-    #[clap(help = "file containing passwords", long, required = true, short)]
-    pub password: PathBuf,
     #[clap(
-        default_value = "results.log",
+        default_value = default_result_path(),
         help = "defines outfile for program output",
         long,
         required = false,
         short
     )]
     pub outfile: PathBuf,
+    #[clap(help = "file containing passwords", long, required = true, short)]
+    pub password: PathBuf,
     #[clap(
-        default_value = "",
         help = "sets a proxy, e.g., http://localhost:8080",
         long,
         required = false,
         short = 'x'
     )]
-    pub proxy: String,
-    #[clap(arg_enum, default_value_t = Resource::MSGraphApi, help = "ressource principal to authenticate to", long, required = false, short)]
-    pub resource_principal: Resource,
-    #[clap(help = "tenant to authenticate to", long, required = true, short)]
-    pub tenant: String,
+    pub proxy: Option<String>,
+    #[clap(arg_enum, default_value = "MSGraphApi", help = "ressource principal to authenticate to", long, required = false, short, value_parser = clap::builder::PossibleValuesParser::new(ENDPOINTS.keys()))]
+    pub resource_principal: String,
+    #[clap(help = "tenant to authenticate to", long, required = false, short)]
+    pub tenant: Option<String>,
     #[clap(help = "file containing usernames", long, required = true, short)]
     pub username: String,
     #[clap(flatten)]

