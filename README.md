@@ -27,7 +27,7 @@ Currently, `RAADEF` is limited to [this set of features](#Features). Having said
 - [ ] Implement support for cycling through `resource principals`.
 - [ ] Implement support for lockout detection -> `lockout` and `force` flags.
 - [x] ~~Implement support for requests `delay`.~~
-- [ ] Improve the logic around the endpoint `HashMap`/`CLI parser`, e.g., try to get away with using the `pub enum Resource` and fetch options direcly from the `HashMap keys` instead.
+- [x] ~~Improve the logic around the endpoint `HashMap`/`CLI parser`, e.g., try to get away with using the `pub enum Resource` and fetch options direcly from the `HashMap keys` instead.~~
 - [x] ~~Restructure the code -> more modularity por favor! 🌯~~
 
 ## Requirements
