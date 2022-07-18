@@ -97,21 +97,20 @@ fn main() -> Result<()> {
 
     create_dir_all("results")?;
 
-    let mut config_builder = ConfigBuilder::new();
-
-    config_builder.add_filter_ignore_str("reqwest::connect");
-    config_builder.add_filter_ignore_str("reqwest::async_impl::client");
+    let config = ConfigBuilder::new()
+        .add_filter_ignore_str("reqwest")
+        .build();
 
     let _ = CombinedLogger::init(vec![
         TermLogger::new(
             args.verbose.log_level_filter(),
-            config_builder.build(),
+            config.clone(),
             TerminalMode::Stdout,
             ColorChoice::Auto,
         ),
         WriteLogger::new(
             args.verbose.log_level_filter(),
-            config_builder.build(),
+            config.clone(),
             File::create(args.outfile.clone()).unwrap(),
         ),
     ]);
