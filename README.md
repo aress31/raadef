@@ -81,6 +81,8 @@ Please submit all `PRs` on the GitHub [pull requests tracker](https://github.com
 
 ## Acknowledgements
 
+Give to Caesar what belongs to Caesar:
+
 - [Spray365](https://github.com/MarkoH17/Spray365)
 - [msspray.py](https://github.com/SecurityRiskAdvisors/msspray)
 
