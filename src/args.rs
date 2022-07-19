@@ -57,7 +57,7 @@ pub struct Args {
     )]
     pub http_2: bool,
     #[clap(
-        default_value_t = 2000,
+        default_value_t = 0,
         help = "sets a random delay (in seconds) between 0 and <JITTER> between each authentication attempt",
         long,
         required = false,
@@ -72,7 +72,7 @@ pub struct Args {
     )]
     pub loop_delay: u64,
     #[clap(
-        default_value_t = 0,
+        default_value_t = 200,
         help = "sets a random delay (in seconds) between 0 and <LOOP_JITTER> between each <LOOP_NUMBER>",
         long,
         required = false
