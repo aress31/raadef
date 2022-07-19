@@ -26,6 +26,7 @@ pub struct Args {
     #[clap(
         action,
         help = "continues authentication attempts even after successes",
+        // help_heading = "foo"
         default_value_t = false,
         long,
         required = false,
@@ -58,7 +59,7 @@ pub struct Args {
     pub http_2: bool,
     #[clap(
         default_value_t = 0,
-        help = "sets a random delay (in seconds) between 0 and <JITTER> between each authentication attempt",
+        help = "sets a random delay (in seconds) from 0 and <JITTER> between each authentication attempt",
         long,
         required = false,
         short
@@ -73,7 +74,7 @@ pub struct Args {
     pub loop_delay: u64,
     #[clap(
         default_value_t = 200,
-        help = "sets a random delay (in seconds) between 0 and <LOOP_JITTER> between each <LOOP_NUMBER>",
+        help = "sets a random delay (in seconds) from 0 and <LOOP_JITTER> between each <LOOP_NUMBER>",
         long,
         required = false
     )]
