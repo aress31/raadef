@@ -146,18 +146,24 @@ fn main() -> Result<()> {
         args.outfile.file_name().unwrap().to_string_lossy()
     );
 
-    let mut i: u128 = 1;
-    let mut j: u128 = 1;
+    let mut loop_number = 0;
+    let mut i: u128 = 0;
+    let mut j: u128 = 0;
 
     password_buf_reader.seek(SeekFrom::Start(0))?;
 
     'outer: for password in password_buf_reader.by_ref().lines() {
         let password = password.unwrap();
 
+        loop_number += 1;
+        j += 1;
+
         username_buf_reader.seek(SeekFrom::Start(0))?;
 
         for username in username_buf_reader.by_ref().lines() {
             let mut username: String = username.unwrap();
+
+            i += 1;
 
             if !args.tenant.as_ref().is_none() {
                 username = format!("{}@{}", username, args.tenant.as_ref().unwrap());
@@ -205,14 +211,16 @@ fn main() -> Result<()> {
                 }
             }
 
-            i += 1;
-
-            let jitter = rand::thread_rng().gen_range(0..=args.jitter);
-
-            thread::sleep(Duration::from_secs(args.delay + jitter));
+            thread::sleep(Duration::from_secs(
+                args.delay + rand::thread_rng().gen_range(0..=args.jitter),
+            ));
         }
 
-        j += 1;
+        if loop_number % args.loop_number == 0 {
+            thread::sleep(Duration::from_secs(
+                args.loop_delay + rand::thread_rng().gen_range(0..=args.loop_jitter),
+            ));
+        }
     }
 
     Ok(())

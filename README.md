@@ -13,11 +13,13 @@ Currently, `RAADEF` is limited to [this set of features](#Features). Having said
 
 ## Features
 
-- Fine-tuning of attacks via the many `CLI switches` available.
+- Fine-tuning of attacks via *the many* `CLI switches` available:
+    - Mechanisms to *help* preventing accounts lockout, e.g., `--loop-number`, `--loop-delay`, `--loop-jitter`.
+    - Mechanisms to *help* evading [Smart Lockout](https://docs.microsoft.com/en-us/azure/active-directory/authentication/howto-password-smart-lockout), e.g., `--delay`, `jitter`, `--proxy`.
 - Password brute forcing.
 - Password spraying.
 - Support for `HTTP/2` for better performance.
-- Support for custom authentication endpoints.
+- Support for custom authentication endpoints -> works amazingly with [FireProx](https://github.com/ustayready/fireprox).
 
 ## Roadmap
 

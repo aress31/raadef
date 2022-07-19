@@ -34,7 +34,7 @@ pub struct Args {
     pub continue_on_success: bool,
     #[clap(
         default_value_t = 0,
-        help = "sets a delay in seconds between each connection",
+        help = "sets a delay (in seconds) between each authentication attempt",
         long,
         required = false,
         short
@@ -57,13 +57,34 @@ pub struct Args {
     )]
     pub http_2: bool,
     #[clap(
-        default_value_t = 0,
-        help = "sets a random delay between each connection",
+        default_value_t = 2000,
+        help = "sets a random delay (in seconds) between 0 and <JITTER> between each authentication attempt",
         long,
         required = false,
         short
     )]
     pub jitter: u64,
+    #[clap(
+        default_value_t = 1800,
+        help = "sets a delay (in seconds) between each <LOOP_NUMBER>",
+        long,
+        required = false
+    )]
+    pub loop_delay: u64,
+    #[clap(
+        default_value_t = 0,
+        help = "sets a random delay (in seconds) between 0 and <LOOP_JITTER> between each <LOOP_NUMBER>",
+        long,
+        required = false
+    )]
+    pub loop_jitter: u64,
+    #[clap(
+        default_value_t = 5,
+        help = "sets the number of outer loops to iterate before waiting for <LOOP_DELAY>",
+        long,
+        required = false
+    )]
+    pub loop_number: u64,
     #[clap(
         default_value = default_result_path(),
         help = "defines outfile for program output",
