@@ -6,7 +6,7 @@ use args::Args;
 use clap::Parser;
 use constants::{ENDPOINTS, ERROR_CODES};
 use rand::Rng;
-use reqwest::{blocking::Client, blocking::Response, Proxy, StatusCode};
+use reqwest::{blocking::Client, blocking::ClientBuilder, blocking::Response, Proxy, StatusCode};
 use simplelog::{
     debug, error, info, trace, ColorChoice, CombinedLogger, ConfigBuilder, TermLogger,
     TerminalMode, WriteLogger,
@@ -99,6 +99,7 @@ fn main() -> Result<()> {
 
     let config = ConfigBuilder::new()
         .add_filter_ignore_str("reqwest")
+        .add_filter_ignore_str("rustls")
         .build();
 
     let _ = CombinedLogger::init(vec![
@@ -117,19 +118,21 @@ fn main() -> Result<()> {
 
     debug!("CLI arguments: {:#?}", args);
 
-    let mut client = Client::new();
+    let mut client_builder = ClientBuilder::new().danger_accept_invalid_certs(true);
+
+    if args.http_2 {
+        client_builder = client_builder.use_rustls_tls();
+    }
 
     if !args.proxy.is_none() {
         let proxy = args.proxy.unwrap();
 
         info!("Proxy set to: <b>{}</>", proxy);
 
-        client = Client::builder()
-            .proxy(Proxy::all(proxy).unwrap())
-            .danger_accept_invalid_certs(true)
-            .build()
-            .unwrap();
+        client_builder = client_builder.proxy(Proxy::all(proxy).unwrap());
     }
+
+    let client = client_builder.build().unwrap();
 
     let mut username_buf_reader = BufReader::new(File::open(args.username)?);
     let mut password_buf_reader = BufReader::new(File::open(args.password)?);

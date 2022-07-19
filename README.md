@@ -13,11 +13,11 @@ Currently, `RAADEF` is limited to [this set of features](#Features). Having said
 
 ## Features
 
-- Fine-tuning of attacks settings.
+- Fine-tuning of attacks via the many `CLI switches` available.
 - Password brute forcing.
 - Password spraying.
-- Supported authentication endpoints are:
-    - https://login.microsoft.com/common/oauth2/token
+- Support for `HTTP/2` for better performance.
+- Support for custom authentication endpoints.
 
 ## Roadmap
 

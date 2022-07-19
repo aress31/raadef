@@ -49,6 +49,14 @@ pub struct Args {
     )]
     pub endpoint: String,
     #[clap(
+        action,
+        help = "uses HTTP/2.0 for better performance",
+        default_value_t = false,
+        long,
+        required = false
+    )]
+    pub http_2: bool,
+    #[clap(
         default_value_t = 0,
         help = "sets a random delay between each connection",
         long,
