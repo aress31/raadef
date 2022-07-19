@@ -158,6 +158,12 @@ fn main() -> Result<()> {
         loop_number += 1;
         j += 1;
 
+        if loop_number % args.loop_number == 0 {
+            thread::sleep(Duration::from_secs(
+                args.loop_delay + rand::thread_rng().gen_range(0..=args.loop_jitter),
+            ));
+        }
+
         username_buf_reader.seek(SeekFrom::Start(0))?;
 
         for username in username_buf_reader.by_ref().lines() {
@@ -213,12 +219,6 @@ fn main() -> Result<()> {
 
             thread::sleep(Duration::from_secs(
                 args.delay + rand::thread_rng().gen_range(0..=args.jitter),
-            ));
-        }
-
-        if loop_number % args.loop_number == 0 {
-            thread::sleep(Duration::from_secs(
-                args.loop_delay + rand::thread_rng().gen_range(0..=args.loop_jitter),
             ));
         }
     }
