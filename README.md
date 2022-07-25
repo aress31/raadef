@@ -1,6 +1,6 @@
 # Rust AzureAD Exploitation Framework (`RAADEF`)
 
-[![Language](https://img.shields.io/badge/Lang-Rust-blue.svg)](https://www.https://www.rust-lang.org/.org)
+[![Language](https://img.shields.io/badge/Lang-Rust-blue.svg)](https://www.rust-lang.org/.org)
 [![License](https://img.shields.io/badge/License-Apache%202.0-red.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ## An extensible `Rust`-based exploitation framework designed to assist red teamers and security professionals in assessing `AzureAD` environments.
