@@ -46,7 +46,7 @@ Currently, `RAADEF` is limited to [this set of features](#Features). Having said
     cd raadef
     ```
 
-3. Compile/run `raadef` with:
+2. Compile/run `raadef` with:
 
     ```powershell
     cargo build --release
